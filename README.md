@@ -1,3 +1,19 @@
+# 声明：由于vscode-chatGPT不再维护，此repo拷贝仅做代码学习使用
+package出的 `vscode-chatgpt-3.9.7-0.xsix` 可在vscode中安装学习
+
+## 如何构建 .vsix 
+参见参考：[publishing-extension](https://code.visualstudio.com/api/working-with-extensions/publishing-extension)
+1. `npm install -g @vscode/vsce`
+2. `vsce package`
+3. 将打包的 `vscode-chatgpt-3.9.7-0.xsix` 通过vscode的本地安装功能进行安装。
+   
+## 注意
+* 本地安装 `.vsix`前先卸载 vsode-chatgpt插件
+
+---
+以下 Link [vscode-chatgpt](https://github.com/gencay/vscode-chatgpt) 原文 
+
+
 <p>
   Hi everyone - Thank you for your interest in this extension.
 
