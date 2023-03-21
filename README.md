@@ -1,5 +1,6 @@
-# 声明：由于vscode-chatGPT不再维护，此repo拷贝仅做代码学习使用
-package出的 `vscode-chatgpt-3.9.7-0.xsix` 可在vscode中安装学习
+# 声明：本代码仅为交流学习
+
+## 由于原作者不再维护原版[vscode-chatgpt](https://github.com/gencay/vscode-chatgpt)，此Repo会努力继续更新vscode-chatgpt插件，但与原作者相同原因**不会上架vscode插件市场**，只能以vsix方式本地安装。
 
 ## 如何构建 .vsix 
 参见参考：[publishing-extension](https://code.visualstudio.com/api/working-with-extensions/publishing-extension)
