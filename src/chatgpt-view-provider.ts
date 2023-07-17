@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/naming-convention */
+/* eslint-disable eqeqeq */
 import delay from 'delay';
 import fetch from 'isomorphic-fetch';
 import * as fs from 'node:fs';
@@ -235,6 +237,12 @@ export default class ChatGptViewProvider implements vscode.WebviewViewProvider {
 				const apiBaseUrl = configuration.get("gpt3.apiBaseUrl") as string;
 
 				if (!apiKey) {
+					/**
+					 * 显示错误消息并询问用户是否将 API Key 存储在会话中或打开设置
+					 *
+					 * @returns {Promise<string>} 用户的选项："Open settings" 或 "Store in session (Recommended)"
+					 */
+
 					vscode.window.showErrorMessage("Please add your API Key to use OpenAI official APIs. Storing the API Key in Settings is discouraged due to security reasons, though you can still opt-in to use it to persist it in settings. Instead you can also temporarily set the API Key one-time: You will need to re-enter after restarting the vs-code.", "Store in session (Recommended)", "Open settings").then(async choice => {
 						if (choice === "Open settings") {
 							vscode.commands.executeCommand('workbench.action.openSettings', "chatgpt.gpt3.apiKey");
