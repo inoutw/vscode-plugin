@@ -1,13 +1,15 @@
 import * as vscode from "vscode";
 import ChatGptViewProvider from './chatgpt-view-provider';
+import QueryViewProvider from "./query-view-provider";
 
 const menuCommands = ["addTests", "findProblems", "optimize", "explain", "addComments", "completeCode", "generateCode", "customPrompt1", "customPrompt2", "adhoc"];
 
 export async function activate(context: vscode.ExtensionContext) {
-	let adhocCommandPrefix: string = context.globalState.get("chatgpt-adhoc-prompt") || '';
-
+	// fix 自签名证书 certificate issue
+	process.env["NODE_TLS_REJECT_UNAUTHORIZED"] = "0";
 	const provider = new ChatGptViewProvider(context);
 
+	const queryProvider = new QueryViewProvider(context);
 	const view = vscode.window.registerWebviewViewProvider(
 		"vscode-chatgpt.view",
 		provider,
@@ -18,22 +20,15 @@ export async function activate(context: vscode.ExtensionContext) {
 		}
 	);
 
-	const freeText = vscode.commands.registerCommand("vscode-chatgpt.freeText", async () => {
-		const value = await vscode.window.showInputBox({
-			prompt: "Ask anything...",
-		});
+	const statusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right);
+	const queryTitle = '代码检索';
+	statusBarItem.text = `$(open-preview) ${queryTitle}`;
+	statusBarItem.command = 'aily.queryCode';
+	statusBarItem.show();
 
-		if (value) {
-			provider?.sendApiRequest(value, { command: "freeText" });
-		}
-	});
 
-	const resetThread = vscode.commands.registerCommand("vscode-chatgpt.clearConversation", async () => {
-		provider?.sendMessage({ type: 'clearConversation' }, true);
-	});
-
-	const exportConversation = vscode.commands.registerCommand("vscode-chatgpt.exportConversation", async () => {
-		provider?.sendMessage({ type: 'exportConversation' }, true);
+	const queryCode = vscode.commands.registerCommand('aily.queryCode', () => {
+		queryProvider.show();
 	});
 
 	const clearSession = vscode.commands.registerCommand("vscode-chatgpt.clearSession", () => {
@@ -49,10 +44,6 @@ export async function activate(context: vscode.ExtensionContext) {
 			provider.subscribeToResponse = vscode.workspace.getConfiguration("chatgpt").get("response.showNotification") || false;
 		}
 
-		if (e.affectsConfiguration('chatgpt.response.autoScroll')) {
-			provider.autoScroll = !!vscode.workspace.getConfiguration("chatgpt").get("response.autoScroll");
-		}
-
 		if (e.affectsConfiguration('chatgpt.useAutoLogin')) {
 			provider.useAutoLogin = vscode.workspace.getConfiguration("chatgpt").get("useAutoLogin") || false;
 
@@ -61,24 +52,8 @@ export async function activate(context: vscode.ExtensionContext) {
 			context.globalState.update("chatgpt-user-agent", null);
 		}
 
-		if (e.affectsConfiguration('chatgpt.chromiumPath')) {
-			provider.setChromeExecutablePath();
-		}
-
 		if (e.affectsConfiguration('chatgpt.profilePath')) {
 			provider.setProfilePath();
-		}
-
-		if (e.affectsConfiguration('chatgpt.proxyServer')) {
-			provider.setProxyServer();
-		}
-
-		if (e.affectsConfiguration('chatgpt.method')) {
-			provider.setMethod();
-		}
-
-		if (e.affectsConfiguration('chatgpt.authenticationType')) {
-			provider.setAuthType();
 		}
 
 		if (e.affectsConfiguration('chatgpt.gpt3.model')) {
@@ -88,52 +63,26 @@ export async function activate(context: vscode.ExtensionContext) {
 		if (e.affectsConfiguration('chatgpt.gpt3.apiBaseUrl')
 			|| e.affectsConfiguration('chatgpt.gpt3.model')
 			|| e.affectsConfiguration('chatgpt.gpt3.organization')
-			|| e.affectsConfiguration('chatgpt.gpt3.maxTokens')
-			|| e.affectsConfiguration('chatgpt.gpt3.temperature')
-			|| e.affectsConfiguration('chatgpt.gpt3.top_p')) {
+			|| e.affectsConfiguration('chatgpt.gpt3.maxTokens')) {
 			provider.prepareConversation(true);
 		}
 
-		if (e.affectsConfiguration('chatgpt.promptPrefix') || e.affectsConfiguration('chatgpt.gpt3.generateCode-enabled') || e.affectsConfiguration('chatgpt.gpt3.model') || e.affectsConfiguration('chatgpt.method')) {
+		if (e.affectsConfiguration('chatgpt.promptPrefix') || e.affectsConfiguration('chatgpt.gpt3.model')) {
 			setContext();
 		}
 	});
 
-	const adhocCommand = vscode.commands.registerCommand("vscode-chatgpt.adhoc", async () => {
-		const editor = vscode.window.activeTextEditor;
-
-		if (!editor) {
-			return;
-		}
-
-		const selection = editor.document.getText(editor.selection);
-		let dismissed = false;
-		if (selection) {
-			await vscode.window
-				.showInputBox({
-					title: "Add prefix to your ad-hoc command",
-					prompt: "Prefix your code with your custom prompt. i.e. Explain this",
-					ignoreFocusOut: true,
-					placeHolder: "Ask anything...",
-					value: adhocCommandPrefix
-				})
-				.then((value) => {
-					if (!value) {
-						dismissed = true;
-						return;
-					}
-
-					adhocCommandPrefix = value.trim() || '';
-					context.globalState.update("chatgpt-adhoc-prompt", adhocCommandPrefix);
-				});
-
-			if (!dismissed && adhocCommandPrefix?.length > 0) {
-				provider?.sendApiRequest(adhocCommandPrefix, { command: "adhoc", code: selection });
-			}
-		}
-	});
 
 	const generateCodeCommand = vscode.commands.registerCommand(`vscode-chatgpt.generateCode`, () => {
+		const prompt = vscode.workspace.getConfiguration("chatgpt").get<string>(`promptPrefix.generateCode`) || '';
+
+		if (prompt) {
+			provider?.sendApiRequest(prompt, { command: "generateCode" });
+		}
+
+	});
+
+	const addToRepoCommand = vscode.commands.registerCommand(`aily.addToRepo`, () => {
 		const editor = vscode.window.activeTextEditor;
 
 		if (!editor) {
@@ -141,11 +90,26 @@ export async function activate(context: vscode.ExtensionContext) {
 		}
 
 		const selection = editor.document.getText(editor.selection);
-		if (selection) {
-			provider?.sendApiRequest(selection, { command: "generateCode", language: editor.document.languageId });
-		}
-	});
 
+		vscode.window
+			.showInputBox({
+				title: "代码描述将存入代码库，支持代码检索",
+				prompt: "",
+				ignoreFocusOut: true,
+				placeHolder: "请输入代码描述",
+				value: ""
+			})
+			.then((value) => {
+				console.log('value', value);
+				if (value) {
+					provider.addToRepo({ code: selection, description: value }).then(res => {
+						console.log('res', res);
+						vscode.window.showInformationMessage('已入库');
+					});
+				}
+			});
+
+	});
 	// Skip AdHoc - as it was registered earlier
 	const registeredCommands = menuCommands.filter(command => command !== "adhoc" && command !== "generateCode").map((command) => vscode.commands.registerCommand(`vscode-chatgpt.${command}`, () => {
 		const prompt = vscode.workspace.getConfiguration("chatgpt").get<string>(`promptPrefix.${command}`);
@@ -161,15 +125,12 @@ export async function activate(context: vscode.ExtensionContext) {
 		}
 	}));
 
-	context.subscriptions.push(view, freeText, resetThread, exportConversation, clearSession, configChanged, adhocCommand, generateCodeCommand, ...registeredCommands);
+	context.subscriptions.push(statusBarItem, addToRepoCommand, view, queryCode, clearSession, configChanged, generateCodeCommand, ...registeredCommands);
 
 	const setContext = () => {
 		menuCommands.forEach(command => {
 			if (command === "generateCode") {
-				let generateCodeEnabled = !!vscode.workspace.getConfiguration("chatgpt").get<boolean>("gpt3.generateCode-enabled");
-				const modelName = vscode.workspace.getConfiguration("chatgpt").get("gpt3.model") as string;
-				const method = vscode.workspace.getConfiguration("chatgpt").get("method") as string;
-				generateCodeEnabled = generateCodeEnabled && method === "GPT3 OpenAI API Key" && modelName.startsWith("code-");
+				let generateCodeEnabled = true;
 				vscode.commands.executeCommand('setContext', "generateCode-enabled", generateCodeEnabled);
 			} else {
 				const enabled = !!vscode.workspace.getConfiguration("chatgpt.promptPrefix").get<boolean>(`${command}-enabled`);

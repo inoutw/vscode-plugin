@@ -1,0 +1,165 @@
+.title {
+    color: blueviolet;
+    padding-top: 6px;
+}
+
+
+h4.error {
+    color: burlywood;
+}
+
+#inputKeywords {
+    width: 60%;
+    height: 24px;
+    background-color: transparent;
+    border: 1px solid #333;
+    border-radius: 2px;
+}
+
+
+.container {
+    width: 100%;
+    height: 100vh;
+    display: flex;
+    align-items: flex-start;
+    flex-direction: column;
+
+}
+
+.search-bar {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    margin-bottom: 10px;
+    margin-top: 10px;
+}
+
+#keywords {
+    flex: 1;
+    padding: 4px;
+    margin-left: 4px;
+    font-size: 14px;
+    border: 1px solid #444;
+    border-radius: 4px;
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+    background-color: transparent;
+    color: var(--vscode-editor-foreground);
+    height: 20px;
+}
+
+#btnSearch {
+    padding: 4px 10px;
+    background-color: transparent;
+    border: 1px solid #444;
+    border-top-right-radius: 4px;
+    border-bottom-right-radius: 4px;
+    border-left: none;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#btnSearch img,
+#btnSearch svg {
+    width: 20px;
+    height: 20px;
+}
+
+#result {
+    width: calc(100%);
+}
+
+#result .item-wrap {
+    border: 1px solid #444;
+    width: calc(100% - 2px);
+    margin-bottom: 10px;
+    border-radius: 4px;
+
+}
+
+#result .title {
+    display: flex;
+    border-bottom: 1px solid #444;
+    padding: 10px;
+}
+
+#result .title .txt {
+    width: calc(100% - 60px);
+}
+
+#result .content {
+    overflow: auto;
+    padding: 10px;
+}
+
+#result .bottom {
+    border-top: 1px solid #444;
+    padding: 0 10px;
+    overflow: auto;
+}
+
+#result .apply {
+    color: blueviolet;
+    margin-left: 10px;
+    cursor: pointer;
+    display: inline-block;
+    padding: 2px 10px;
+}
+
+@-webkit-keyframes spin {
+    from {
+        -webkit-transform: rotate(0deg);
+    }
+
+    to {
+        -webkit-transform: rotate(360deg);
+    }
+}
+
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+#btnSearch svg {
+    -webkit-animation: spin 1s linear 1s 5 alternate;
+    animation: spin 1s linear infinite;
+}
+
+/* .code.hljs, pre code.hljs {
+    background: var(--vscode-input-background);
+    color: var(--vscode-editor-foreground);
+  } */
+.code-check p {
+    margin-top: 4px;
+    margin-bottom: 4px;
+}
+
+.typing::after {
+    content: '▌';
+}
+
+.blinker::after {
+    animation: blinker 1s step-end infinite;
+}
+
+@keyframes blinker {
+    0% {
+        visibility: visible;
+    }
+
+    50% {
+        visibility: hidden;
+    }
+
+    100% {
+        visibility: visible;
+    }
+}

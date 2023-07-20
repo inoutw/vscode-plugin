@@ -35,7 +35,7 @@ import type * as PTimeoutTypes from 'p-timeout';
 import type { Page } from 'puppeteer';
 import { remark } from 'remark';
 import stripMarkdown from 'strip-markdown';
-
+import * as vscode from 'vscode';
 import * as types from './types';
 
 declare global {
@@ -606,4 +606,29 @@ export async function browserGetResponse<T>(
         return null;
     }
 
+}
+
+export function getWebviewOptions(extensionUri: vscode.Uri): vscode.WebviewPanelOptions & vscode.WebviewOptions {
+    return {
+        // Enable javascript in the webview
+        enableScripts: true,
+        retainContextWhenHidden: true, // webview被隐藏时保持状态，避免被重置
+        // And restrict the webview to only loading content from our extension's `media` directory.
+        localResourceRoots: [vscode.Uri.joinPath(extensionUri, 'media')]
+    };
+}
+
+export async function focusEditor() {
+    await vscode.commands.executeCommand('workbench.action.focusActiveEditorGroup');
+    await vscode.commands.executeCommand('workbench.action.files.saveAll');
+    await vscode.commands.executeCommand('workbench.action.files.revert');
+}
+
+export function getRandomId() {
+    let text = '';
+    const possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    for (let i = 0; i < 32; i++) {
+        text += possible.charAt(Math.floor(Math.random() * possible.length));
+    }
+    return text;
 }

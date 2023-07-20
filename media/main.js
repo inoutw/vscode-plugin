@@ -1,3 +1,4 @@
+/* eslint-disable eqeqeq */
 // @ts-nocheck
 
 (function () {
@@ -17,9 +18,9 @@
         xhtml: false
     });
 
-    const aiSvg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 41 41" fill="none" stroke-width="1.5" class="w-5 mr-2"><path d="M37.5324 16.8707C37.9808 15.5241 38.1363 14.0974 37.9886 12.6859C37.8409 11.2744 37.3934 9.91076 36.676 8.68622C35.6126 6.83404 33.9882 5.3676 32.0373 4.4985C30.0864 3.62941 27.9098 3.40259 25.8215 3.85078C24.8796 2.7893 23.7219 1.94125 22.4257 1.36341C21.1295 0.785575 19.7249 0.491269 18.3058 0.500197C16.1708 0.495044 14.0893 1.16803 12.3614 2.42214C10.6335 3.67624 9.34853 5.44666 8.6917 7.47815C7.30085 7.76286 5.98686 8.3414 4.8377 9.17505C3.68854 10.0087 2.73073 11.0782 2.02839 12.312C0.956464 14.1591 0.498905 16.2988 0.721698 18.4228C0.944492 20.5467 1.83612 22.5449 3.268 24.1293C2.81966 25.4759 2.66413 26.9026 2.81182 28.3141C2.95951 29.7256 3.40701 31.0892 4.12437 32.3138C5.18791 34.1659 6.8123 35.6322 8.76321 36.5013C10.7141 37.3704 12.8907 37.5973 14.9789 37.1492C15.9208 38.2107 17.0786 39.0587 18.3747 39.6366C19.6709 40.2144 21.0755 40.5087 22.4946 40.4998C24.6307 40.5054 26.7133 39.8321 28.4418 38.5772C30.1704 37.3223 31.4556 35.5506 32.1119 33.5179C33.5027 33.2332 34.8167 32.6547 35.9659 31.821C37.115 30.9874 38.0728 29.9178 38.7752 28.684C39.8458 26.8371 40.3023 24.6979 40.0789 22.5748C39.8556 20.4517 38.9639 18.4544 37.5324 16.8707ZM22.4978 37.8849C20.7443 37.8874 19.0459 37.2733 17.6994 36.1501C17.7601 36.117 17.8666 36.0586 17.936 36.0161L25.9004 31.4156C26.1003 31.3019 26.2663 31.137 26.3813 30.9378C26.4964 30.7386 26.5563 30.5124 26.5549 30.2825V19.0542L29.9213 20.998C29.9389 21.0068 29.9541 21.0198 29.9656 21.0359C29.977 21.052 29.9842 21.0707 29.9867 21.0902V30.3889C29.9842 32.375 29.1946 34.2791 27.7909 35.6841C26.3872 37.0892 24.4838 37.8806 22.4978 37.8849ZM6.39227 31.0064C5.51397 29.4888 5.19742 27.7107 5.49804 25.9832C5.55718 26.0187 5.66048 26.0818 5.73461 26.1244L13.699 30.7248C13.8975 30.8408 14.1233 30.902 14.3532 30.902C14.583 30.902 14.8088 30.8408 15.0073 30.7248L24.731 25.1103V28.9979C24.7321 29.0177 24.7283 29.0376 24.7199 29.0556C24.7115 29.0736 24.6988 29.0893 24.6829 29.1012L16.6317 33.7497C14.9096 34.7416 12.8643 35.0097 10.9447 34.4954C9.02506 33.9811 7.38785 32.7263 6.39227 31.0064ZM4.29707 13.6194C5.17156 12.0998 6.55279 10.9364 8.19885 10.3327C8.19885 10.4013 8.19491 10.5228 8.19491 10.6071V19.808C8.19351 20.0378 8.25334 20.2638 8.36823 20.4629C8.48312 20.6619 8.64893 20.8267 8.84863 20.9404L18.5723 26.5542L15.206 28.4979C15.1894 28.5089 15.1703 28.5155 15.1505 28.5173C15.1307 28.5191 15.1107 28.516 15.0924 28.5082L7.04046 23.8557C5.32135 22.8601 4.06716 21.2235 3.55289 19.3046C3.03862 17.3858 3.30624 15.3413 4.29707 13.6194ZM31.955 20.0556L22.2312 14.4411L25.5976 12.4981C25.6142 12.4872 25.6333 12.4805 25.6531 12.4787C25.6729 12.4769 25.6928 12.4801 25.7111 12.4879L33.7631 17.1364C34.9967 17.849 36.0017 18.8982 36.6606 20.1613C37.3194 21.4244 37.6047 22.849 37.4832 24.2684C37.3617 25.6878 36.8382 27.0432 35.9743 28.1759C35.1103 29.3086 33.9415 30.1717 32.6047 30.6641C32.6047 30.5947 32.6047 30.4733 32.6047 30.3889V21.188C32.6066 20.9586 32.5474 20.7328 32.4332 20.5338C32.319 20.3348 32.154 20.1698 31.955 20.0556ZM35.3055 15.0128C35.2464 14.9765 35.1431 14.9142 35.069 14.8717L27.1045 10.2712C26.906 10.1554 26.6803 10.0943 26.4504 10.0943C26.2206 10.0943 25.9948 10.1554 25.7963 10.2712L16.0726 15.8858V11.9982C16.0715 11.9783 16.0753 11.9585 16.0837 11.9405C16.0921 11.9225 16.1048 11.9068 16.1207 11.8949L24.1719 7.25025C25.4053 6.53903 26.8158 6.19376 28.2383 6.25482C29.6608 6.31589 31.0364 6.78077 32.2044 7.59508C33.3723 8.40939 34.2842 9.53945 34.8334 10.8531C35.3826 12.1667 35.5464 13.6095 35.3055 15.0128ZM14.2424 21.9419L10.8752 19.9981C10.8576 19.9893 10.8423 19.9763 10.8309 19.9602C10.8195 19.9441 10.8122 19.9254 10.8098 19.9058V10.6071C10.8107 9.18295 11.2173 7.78848 11.9819 6.58696C12.7466 5.38544 13.8377 4.42659 15.1275 3.82264C16.4173 3.21869 17.8524 2.99464 19.2649 3.1767C20.6775 3.35876 22.0089 3.93941 23.1034 4.85067C23.0427 4.88379 22.937 4.94215 22.8668 4.98473L14.9024 9.58517C14.7025 9.69878 14.5366 9.86356 14.4215 10.0626C14.3065 10.2616 14.2466 10.4877 14.2479 10.7175L14.2424 21.9419ZM16.071 17.9991L20.4018 15.4978L24.7325 17.9975V22.9985L20.4018 25.4983L16.071 22.9985V17.9991Z" fill="currentColor"></path></svg>`;
+    const aiPng = `data:image/png;base64,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`;
 
-    const userSvg = `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 mr-2"><path stroke-linecap="round" stroke-linejoin="round" d="M17.982 18.725A7.488 7.488 0 0012 15.75a7.488 7.488 0 00-5.982 2.975m11.963 0a9 9 0 10-11.963 0m11.963 0A8.966 8.966 0 0112 21a8.966 8.966 0 01-5.982-2.275M15 9.75a3 3 0 11-6 0 3 3 0 016 0z" /></svg>`;
+    const userSvg = `<?xml version="1.0" standalone="no"?><!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd"><svg t="1689660922627" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="14976" width="20" height="20" xmlns:xlink="http://www.w3.org/1999/xlink"><path d="M629.546667 640a95.957333 95.957333 0 0 1 95.914666 95.957333v24.533334c0 38.144-13.653333 75.093333-38.4 104.064C620.032 942.762667 518.186667 981.333333 384 981.333333s-236.032-38.613333-302.848-116.906666a160 160 0 0 1-38.314667-103.850667v-24.661333a95.957333 95.957333 0 0 1 95.957334-96h490.752z m0 64H138.752a31.957333 31.957333 0 0 0-32 31.957333v24.661334c0 22.826667 8.192 44.928 23.04 62.293333 53.461333 62.634667 137.386667 94.464 254.165333 94.464 116.864 0 200.789333-31.829333 254.421334-94.464a96 96 0 0 0 23.04-62.421333v-24.533334a31.957333 31.957333 0 0 0-31.914667-32z m183.466666-644.096a32 32 0 0 1 43.648 11.904A541.610667 541.610667 0 0 1 928 341.333333c0 96.170667-25.002667 188.757333-71.808 270.336a32 32 0 0 1-55.509333-31.829333A477.610667 477.610667 0 0 0 864 341.333333c0-84.608-21.888-165.973333-62.933333-237.781333a32 32 0 0 1 11.946666-43.648zM384 128.170667a213.333333 213.333333 0 1 1 0 426.666666 213.333333 213.333333 0 0 1 0-426.666666z m281.130667 16.853333a32 32 0 0 1 43.648 12.032A371.754667 371.754667 0 0 1 757.333333 341.333333c0 65.621333-16.981333 128.853333-48.768 184.661334a32 32 0 1 1-55.637333-31.701334A307.754667 307.754667 0 0 0 693.333333 341.333333a307.754667 307.754667 0 0 0-40.192-152.661333 32 32 0 0 1 11.946667-43.648zM384 192.213333a149.333333 149.333333 0 1 0 0 298.666667 149.333333 149.333333 0 0 0 0-298.666667z" fill="#ffffff" p-id="14977"></path></svg>`;
 
     const clipboardSvg = `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4"><path stroke-linecap="round" stroke-linejoin="round" d="M15.666 3.888A2.25 2.25 0 0013.5 2.25h-3c-1.03 0-1.9.693-2.166 1.638m7.332 0c.055.194.084.4.084.612v0a.75.75 0 01-.75.75H9a.75.75 0 01-.75-.75v0c0-.212.03-.418.084-.612m7.332 0c.646.049 1.288.11 1.927.184 1.1.128 1.907 1.077 1.907 2.185V19.5a2.25 2.25 0 01-2.25 2.25H6.75A2.25 2.25 0 014.5 19.5V6.257c0-1.108.806-2.057 1.907-2.185a48.208 48.208 0 011.927-.184" /></svg>`;
 
@@ -45,8 +46,16 @@
     window.addEventListener("message", (event) => {
         const message = event.data;
         const list = document.getElementById("qa-list");
-
+        const addRepoBtn = document.getElementById('add-repo') || {};
         switch (message.type) {
+            case "addRepoResponse":
+                const result = message.value == 'success' ? `${checkSvg} Added` : `${cancelSvg} Failed`;
+                addRepoBtn.innerHTML = result;
+
+                setTimeout(() => {
+                    addRepoBtn.innerHTML = `${plusSvg} Add`;
+                }, 2000);
+                break;
             case "showInProgress":
                 if (message.showStopButton) {
                     document.getElementById("stop-button").classList.remove("hidden");
@@ -74,10 +83,9 @@
                 };
 
                 list.innerHTML +=
-                    `<div class="p-4 self-end mt-4 question-element-ext relative input-background">
-                        <h2 class="mb-5 flex">${userSvg}You</h2>
+                    `<div class="p-3 self-end question-element-ext relative input-background">
+                        <h3 class="mb-2 flex mt-0"><span class="mr-1">${userSvg}</span> ${message.username}</h3>
                         <no-export class="mb-2 flex items-center">
-                            <button title="Edit and resend this prompt" class="resend-element-ext p-1.5 flex items-center rounded-lg absolute right-6 top-6">${pencilSvg}</button>
                             <div class="hidden send-cancel-elements-ext flex gap-2">
                                 <button title="Send this prompt" class="send-element-ext p-1 pr-2 flex items-center">${sendSvg}&nbsp;Send</button>
                                 <button title="Cancel" class="cancel-element-ext p-1 pr-2 flex items-center">${cancelSvg}&nbsp;Cancel</button>
@@ -110,8 +118,8 @@
                     existingMessage.innerHTML = markedResponse;
                 } else {
                     list.innerHTML +=
-                        `<div class="p-4 self-end mt-4 pb-8 answer-element-ext">
-                        <h2 class="mb-5 flex">${aiSvg}ChatGPT</h2>
+                        `<div class="p-3 self-end pb-8 answer-element-ext">
+                        <h3 class="mb-2 flex mt-0 ai-title"><img src="${aiPng}"/>Aily</h3>
                         <div class="result-streaming" id="${message.id}">${markedResponse}</div>
                     </div>`;
                 }
@@ -127,11 +135,11 @@
                         buttonWrapper.classList.add("code-actions-wrapper", "flex", "gap-3", "pr-2", "pt-1", "pb-1", "flex-wrap", "items-center", "justify-end", "rounded-t-lg", "input-background");
 
                         // Create copy to clipboard button
-                        const copyButton = document.createElement("button");
-                        copyButton.title = "Copy to clipboard";
-                        copyButton.innerHTML = `${clipboardSvg} Copy`;
+                        // const copyButton = document.createElement("button");
+                        // copyButton.title = "Copy to clipboard";
+                        // copyButton.innerHTML = `${clipboardSvg} Copy`;
 
-                        copyButton.classList.add("code-element-ext", "p-1", "pr-2", "flex", "items-center", "rounded-lg");
+                        // copyButton.classList.add("code-element-ext", "p-1", "pr-2", "flex", "items-center", "rounded-lg");
 
                         const insert = document.createElement("button");
                         insert.title = "Insert the below code to the current file";
@@ -139,13 +147,14 @@
 
                         insert.classList.add("edit-element-ext", "p-1", "pr-2", "flex", "items-center", "rounded-lg");
 
-                        const newTab = document.createElement("button");
-                        newTab.title = "Create a new file with the below code";
-                        newTab.innerHTML = `${plusSvg} New`;
+                        const addToRepo = document.createElement("button");
+                        addToRepo.title = "Add the code to repository";
+                        addToRepo.innerHTML = `${plusSvg} Add`;
+                        addToRepo.id = 'add-repo';
 
-                        newTab.classList.add("new-code-element-ext", "p-1", "pr-2", "flex", "items-center", "rounded-lg");
+                        addToRepo.classList.add("add-code-element-ext", "p-1", "pr-2", "flex", "items-center", "rounded-lg");
 
-                        buttonWrapper.append(copyButton, insert, newTab);
+                        buttonWrapper.append(addToRepo);
 
                         if (preCode.parentNode.previousSibling) {
                             preCode.parentNode.parentNode.insertBefore(buttonWrapper, preCode.parentNode.previousSibling);
@@ -155,7 +164,7 @@
                     });
 
                     existingMessage = document.getElementById(message.id);
-                    existingMessage.classList.remove("result-streaming");
+                    existingMessage?.classList?.remove("result-streaming");
                 }
 
                 if (message.autoScroll && (message.done || markedResponse.endsWith("\n"))) {
@@ -168,11 +177,11 @@
                     return;
                 }
 
-                const messageValue = message.value || "An error occurred. If this issue persists please clear your session token with `ChatGPT: Reset session` command and/or restart your Visual Studio Code. If you still experience issues, it may be due to outage on https://openai.com services.";
+                const messageValue = message.value || "An error occurred. If this issue persists please clear your session token with `Aily: Reset session` command and/or restart your Visual Studio Code. If you still experience issues, it may be due to outage on https://openai.com services.";
 
                 list.innerHTML +=
                     `<div class="p-4 self-end mt-4 pb-8 error-element-ext">
-                        <h2 class="mb-5 flex">${aiSvg}ChatGPT</h2>
+                        <h3 class="mb-5 flex ai-title"><img src="${aiPng}"/>Aily</h3>
                         <div class="text-red-400">${marked.parse(messageValue)}</div>
                     </div>`;
 
@@ -226,6 +235,18 @@
         }
     };
 
+    const handleGenerateCode = () => {
+        const input = document.getElementById("question-input");
+        if (input.value?.length > 0) {
+            vscode.postMessage({
+                type: "generateCode",
+                value: input.value,
+            });
+
+            input.value = "";
+        }
+    };
+
     const clearConversation = () => {
         document.getElementById("qa-list").innerHTML = "";
 
@@ -237,22 +258,10 @@
 
     };
 
-    const exportConversation = () => {
-        const turndownService = new TurndownService({ codeBlockStyle: "fenced" });
-        turndownService.remove('no-export');
-        let markdown = turndownService.turndown(document.getElementById("qa-list"));
-
-        vscode.postMessage({
-            type: "openNew",
-            value: markdown,
-            language: "markdown"
-        });
-    };
-
     document.getElementById('question-input').addEventListener("keydown", function (event) {
-        if (event.key == "Enter" && !event.shiftKey && !event.isComposing) {
+        if (event.key === "Enter" && !event.shiftKey && !event.isComposing) {
             event.preventDefault();
-            addFreeTextQuestion();
+            handleGenerateCode();
         }
     });
 
@@ -428,10 +437,10 @@
             return;
         }
 
-        if (targetButton?.classList?.contains("new-code-element-ext")) {
+        if (targetButton?.classList?.contains("add-code-element-ext")) {
             e.preventDefault();
             vscode.postMessage({
-                type: "openNew",
+                type: "addToRepo",
                 value: targetButton.parentElement?.nextElementSibling?.lastChild?.textContent,
             });
 

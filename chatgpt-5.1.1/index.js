@@ -65,6 +65,7 @@ async function* streamAsyncIterable(stream) {
 // src/fetch-sse.ts
 async function fetchSSE(url, options, fetch2 = fetch) {
   const { onMessage, ...fetchOptions } = options;
+
   const res = await fetch2(url, fetchOptions);
   if (!res.ok) {
     let reason;
@@ -133,8 +134,8 @@ var ChatGPTAPI = class {
       messageStore,
       completionParams,
       systemMessage,
-      maxModelTokens = 4e3,
-      maxResponseTokens = 1e3,
+      maxModelTokens = 32768,
+      maxResponseTokens = 9e3,
       getMessageById,
       upsertMessage,
       fetch: fetch2 = fetch

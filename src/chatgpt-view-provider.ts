@@ -2,12 +2,10 @@
 /* eslint-disable eqeqeq */
 import delay from 'delay';
 import fetch from 'isomorphic-fetch';
-import * as fs from 'node:fs';
-import * as os from 'node:os';
 import * as vscode from 'vscode';
-import { ChatGPTAPI as ChatGPTAPI3 } from '../chatgpt-4.7.2/index';
 import { ChatGPTAPI as ChatGPTAPI35 } from '../chatgpt-5.1.1/index';
 import { AuthType, LoginMethod } from "./types";
+import { getRandomId } from "./utils";
 
 export default class ChatGptViewProvider implements vscode.WebviewViewProvider {
 	private webView?: vscode.WebviewView;
@@ -16,15 +14,12 @@ export default class ChatGptViewProvider implements vscode.WebviewViewProvider {
 	public autoScroll: boolean;
 	public useAutoLogin?: boolean;
 	public useGpt3?: boolean;
-	public chromiumPath?: string;
 	public profilePath?: string;
 	public model?: string;
 
-	private apiGpt3?: ChatGPTAPI3;
 	private apiGpt35?: ChatGPTAPI35;
 	private conversationId?: string;
 	private messageId?: string;
-	private proxyServer?: string;
 	private loginMethod?: LoginMethod;
 	private authType?: AuthType;
 
@@ -33,6 +28,10 @@ export default class ChatGptViewProvider implements vscode.WebviewViewProvider {
 	private abortController?: AbortController;
 	private currentMessageId: string = "";
 	private response: string = "";
+	private apiKey: string = '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';
+	private username: string;
+	private description: string = '';
+
 
 	/**
 	 * Message to be rendered lazily if they haven't been rendered
@@ -41,13 +40,11 @@ export default class ChatGptViewProvider implements vscode.WebviewViewProvider {
 	private leftOverMessage?: any;
 	constructor(private context: vscode.ExtensionContext) {
 		this.subscribeToResponse = vscode.workspace.getConfiguration("chatgpt").get("response.showNotification") || false;
-		this.autoScroll = !!vscode.workspace.getConfiguration("chatgpt").get("response.autoScroll");
+		this.autoScroll = true;
 		this.model = vscode.workspace.getConfiguration("chatgpt").get("gpt3.model") as string;
-
+		this.username = vscode.workspace.getConfiguration("chatgpt").get("username") as string;
 		this.setMethod();
-		this.setChromeExecutablePath();
 		this.setProfilePath();
-		this.setProxyServer();
 		this.setAuthType();
 	}
 
@@ -68,11 +65,23 @@ export default class ChatGptViewProvider implements vscode.WebviewViewProvider {
 		};
 
 		webviewView.webview.html = this.getWebviewHtml(webviewView.webview);
+		this.sendMessage({ type: 'username', value: this.username }, true);
 
 		webviewView.webview.onDidReceiveMessage(async data => {
 			switch (data.type) {
 				case 'addFreeTextQuestion':
 					this.sendApiRequest(data.value, { command: "freeText" });
+					break;
+				case 'generateCode':
+					// 记录第一次的问题，作为入库的描述
+					if (this.questionCounter === 0) {
+						this.description = data.value;
+					}
+					const prompt = vscode.workspace.getConfiguration("chatgpt").get<string>(`promptPrefix.generateCode`) || '';
+					this.sendApiRequest(`${prompt}: ${data.value}`, { command: "generateCode" });
+					break;
+				case 'addToRepo':
+					this.addToRepo({ code: data.value });
 					break;
 				case 'editCode':
 					const escapedString = (data.value as string).replace(/\$/g, '\\$');;
@@ -99,8 +108,6 @@ export default class ChatGptViewProvider implements vscode.WebviewViewProvider {
 					this.logEvent("browser-cleared");
 					break;
 				case 'cleargpt3':
-					this.apiGpt3 = undefined;
-
 					this.logEvent("gpt3-cleared");
 					break;
 				case 'login':
@@ -147,25 +154,20 @@ export default class ChatGptViewProvider implements vscode.WebviewViewProvider {
 		this.abortController?.abort?.();
 		this.inProgress = false;
 		this.sendMessage({ type: 'showInProgress', inProgress: this.inProgress });
-		const responseInMarkdown = !this.isCodexModel;
+		const responseInMarkdown = true;
 		this.sendMessage({ type: 'addResponse', value: this.response, done: true, id: this.currentMessageId, autoScroll: this.autoScroll, responseInMarkdown });
 		this.logEvent("stopped-generating");
 	}
 
 	public clearSession(): void {
 		this.stopGenerating();
-		this.apiGpt3 = undefined;
 		this.messageId = undefined;
 		this.conversationId = undefined;
 		this.logEvent("cleared-session");
 	}
 
-	public setProxyServer(): void {
-		this.proxyServer = vscode.workspace.getConfiguration("chatgpt").get("proxyServer");
-	}
-
 	public setMethod(): void {
-		this.loginMethod = vscode.workspace.getConfiguration("chatgpt").get("method") as LoginMethod;
+		this.loginMethod = 'GPT3 OpenAI API Key';
 
 		this.useGpt3 = true;
 		this.useAutoLogin = false;
@@ -173,45 +175,13 @@ export default class ChatGptViewProvider implements vscode.WebviewViewProvider {
 	}
 
 	public setAuthType(): void {
-		this.authType = vscode.workspace.getConfiguration("chatgpt").get("authenticationType");
-		this.clearSession();
-	}
-
-	public setChromeExecutablePath(): void {
-		let path = "";
-		switch (os.platform()) {
-			case 'win32':
-				path = 'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe';
-				break;
-
-			case 'darwin':
-				path = '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome';
-				break;
-
-			default:
-				/**
-				 * Since two (2) separate chrome releases exists on linux
-				 * we first do a check to ensure we're executing the right one.
-				 */
-				const chromeExists = fs.existsSync('/usr/bin/google-chrome');
-
-				path = chromeExists
-					? '/usr/bin/google-chrome'
-					: '/usr/bin/google-chrome-stable';
-				break;
-		}
-
-		this.chromiumPath = vscode.workspace.getConfiguration("chatgpt").get("chromiumPath") || path;
+		this.authType = 'OpenAI Authentication';
 		this.clearSession();
 	}
 
 	public setProfilePath(): void {
 		this.profilePath = vscode.workspace.getConfiguration("chatgpt").get("profilePath");
 		this.clearSession();
-	}
-
-	private get isCodexModel(): boolean {
-		return !!this.model?.startsWith("code-");
 	}
 
 	private get isGpt35Model(): boolean {
@@ -226,14 +196,14 @@ export default class ChatGptViewProvider implements vscode.WebviewViewProvider {
 
 		const state = this.context.globalState;
 		const configuration = vscode.workspace.getConfiguration("chatgpt");
-
 		if (this.useGpt3) {
-			if ((this.isGpt35Model && !this.apiGpt35) || (!this.isGpt35Model && !this.apiGpt3) || modelChanged) {
-				let apiKey = configuration.get("gpt3.apiKey") as string || state.get("chatgpt-gpt3-apiKey") as string;
+			if ((this.isGpt35Model && !this.apiGpt35) || (!this.isGpt35Model) || modelChanged) {
+				// let apiKey = configuration.get("gpt3.apiKey") as string || state.get("chatgpt-gpt3-apiKey") as string;
+				let apiKey = this.apiKey;
 				const organization = configuration.get("gpt3.organization") as string;
 				const max_tokens = configuration.get("gpt3.maxTokens") as number;
-				const temperature = configuration.get("gpt3.temperature") as number;
-				const top_p = configuration.get("gpt3.top_p") as number;
+				const temperature = 1;
+				const top_p = 1;
 				const apiBaseUrl = configuration.get("gpt3.apiBaseUrl") as string;
 
 				if (!apiKey) {
@@ -271,19 +241,6 @@ export default class ChatGptViewProvider implements vscode.WebviewViewProvider {
 
 				if (this.isGpt35Model) {
 					this.apiGpt35 = new ChatGPTAPI35({
-						apiKey,
-						fetch: fetch,
-						apiBaseUrl: apiBaseUrl?.trim() || undefined,
-						organization,
-						completionParams: {
-							model: this.model,
-							max_tokens,
-							temperature,
-							top_p,
-						}
-					});
-				} else {
-					this.apiGpt3 = new ChatGPTAPI3({
 						apiKey,
 						fetch: fetch,
 						apiBaseUrl: apiBaseUrl?.trim() || undefined,
@@ -335,7 +292,7 @@ export default class ChatGptViewProvider implements vscode.WebviewViewProvider {
 
 		this.response = '';
 		let question = this.processQuestion(prompt, options.code, options.language);
-		const responseInMarkdown = !this.isCodexModel;
+		const responseInMarkdown = true;
 
 		// If the ChatGPT view is not in focus/visible; focus on it to render Q&A
 		if (this.webView == null) {
@@ -347,9 +304,9 @@ export default class ChatGptViewProvider implements vscode.WebviewViewProvider {
 		this.inProgress = true;
 		this.abortController = new AbortController();
 		this.sendMessage({ type: 'showInProgress', inProgress: this.inProgress, showStopButton: this.useGpt3 });
-		this.currentMessageId = this.getRandomId();
+		this.currentMessageId = getRandomId();
 
-		this.sendMessage({ type: 'addQuestion', value: prompt, code: options.code, autoScroll: this.autoScroll });
+		this.sendMessage({ type: 'addQuestion', value: prompt, code: options.code, autoScroll: this.autoScroll, username: this.username });
 
 		try {
 			if (this.useGpt3) {
@@ -365,15 +322,6 @@ export default class ChatGptViewProvider implements vscode.WebviewViewProvider {
 						},
 					});
 					({ text: this.response, id: this.conversationId, parentMessageId: this.messageId } = gpt3Response);
-				} else if (!this.isGpt35Model && this.apiGpt3) {
-					({ text: this.response, conversationId: this.conversationId, parentMessageId: this.messageId } = await this.apiGpt3.sendMessage(question, {
-						promptPrefix: this.systemContext,
-						abortSignal: this.abortController.signal,
-						onProgress: (partialResponse) => {
-							this.response = partialResponse.text;
-							this.sendMessage({ type: 'addResponse', value: this.response, id: this.currentMessageId, autoScroll: this.autoScroll, responseInMarkdown });
-						},
-					}));
 				}
 			}
 
@@ -448,6 +396,28 @@ export default class ChatGptViewProvider implements vscode.WebviewViewProvider {
 	}
 
 	/**
+	 * 将代码和描述入库
+	 * @param  
+	 */
+	public async addToRepo({ code, description = this.description }: any, sendMsg = true): Promise<string> {
+
+		const thisfetch = globalThis.fetch;
+		try {
+			const body = JSON.stringify({ function_code: code, function_description: description });
+			let res = await thisfetch('http://127.0.0.1:5000/add_data', { headers: { 'Content-Type': 'application/json' }, method: 'POST', body });
+			if (sendMsg) {
+				this.sendMessage({ type: 'addRepoResponse', value: 'success' });
+			}
+			return Promise.resolve('success');
+		} catch {
+			if (sendMsg) {
+				this.sendMessage({ type: 'addRepoResponse', value: 'failed' });
+			}
+			return Promise.reject('failed');
+
+		}
+	}
+	/**
 	 * Message sender, stores if a message cannot be delivered
 	 * @param message Message to be sent to WebView
 	 * @param ignoreMessageIfNullWebView We will ignore the command if webView is null/not-focused
@@ -482,7 +452,10 @@ export default class ChatGptViewProvider implements vscode.WebviewViewProvider {
 		const vendorTailwindJs = webview.asWebviewUri(vscode.Uri.joinPath(this.context.extensionUri, 'media', 'vendor', 'tailwindcss.3.2.4.min.js'));
 		const vendorTurndownJs = webview.asWebviewUri(vscode.Uri.joinPath(this.context.extensionUri, 'media', 'vendor', 'turndown.js'));
 
-		const nonce = this.getRandomId();
+		const nonce = getRandomId();
+
+		const imgLogo = webview.asWebviewUri(vscode.Uri.joinPath(this.context.extensionUri, 'images', 'code-aily.png'));
+
 
 		return `<!DOCTYPE html>
 			<html lang="en">
@@ -502,64 +475,41 @@ export default class ChatGptViewProvider implements vscode.WebviewViewProvider {
 					<div id="introduction" class="flex flex-col justify-between h-full justify-center px-6 w-full relative login-screen overflow-auto">
 						<div class="flex items-start text-center features-block my-5">
 							<div class="flex flex-col gap-3.5 flex-1">
-								<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" class="w-6 h-6 m-auto">
-									<path stroke-linecap="round" stroke-linejoin="round" d="M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z"></path>
-								</svg>
-								<h2>Features</h2>
+								<img src="${imgLogo}" class="img-logo">
+								<h2>欢迎使用Aily</h2>
 								<ul class="flex flex-col gap-3.5 text-xs">
-									<li class="features-li w-full border border-zinc-700 p-3 rounded-md">Access to your ChatGPT conversation history</li>
-									<li class="features-li w-full border border-zinc-700 p-3 rounded-md">Improve your code, add tests & find bugs</li>
-									<li class="features-li w-full border border-zinc-700 p-3 rounded-md">Copy or create new files automatically</li>
-									<li class="features-li w-full border border-zinc-700 p-3 rounded-md">Syntax highlighting with auto language detection</li>
+									<li class="features-li w-full border border-zinc-700 p-3 rounded-md">通过自然语言对话，智能生成代码</li>
+									<li class="features-li w-full border border-zinc-700 p-3 rounded-md">代码入库</li>
+									<li class="features-li w-full border border-zinc-700 p-3 rounded-md">代码检索和应用</li>
 								</ul>
 							</div>
 						</div>
 						<div class="flex flex-col gap-4 h-full items-center justify-end text-center">
-							<button id="login-button" class="mb-4 btn btn-primary flex gap-2 justify-center p-3 rounded-md">Log in</button>
+							
 							<button id="list-conversations-link" class="hidden mb-4 btn btn-primary flex gap-2 justify-center p-3 rounded-md" title="You can access this feature via the kebab menu below. NOTE: Only available with Browser Auto-login method">
 								<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" d="M20.25 8.511c.884.284 1.5 1.128 1.5 2.097v4.286c0 1.136-.847 2.1-1.98 2.193-.34.027-.68.052-1.02.072v3.091l-3-3c-1.354 0-2.694-.055-4.02-.163a2.115 2.115 0 01-.825-.242m9.345-8.334a2.126 2.126 0 00-.476-.095 48.64 48.64 0 00-8.048 0c-1.131.094-1.976 1.057-1.976 2.192v4.286c0 .837.46 1.58 1.155 1.951m9.345-8.334V6.637c0-1.621-1.152-3.026-2.76-3.235A48.455 48.455 0 0011.25 3c-2.115 0-4.198.137-6.24.402-1.608.209-2.76 1.614-2.76 3.235v6.226c0 1.621 1.152 3.026 2.76 3.235.577.075 1.157.14 1.74.194V21l4.155-4.155" /></svg>&nbsp;Show conversations
 							</button>
 							<p class="max-w-sm text-center text-xs text-slate-500">
-								<a title="" id="settings-button" href="#">Update settings</a>&nbsp; | &nbsp;<a title="" id="settings-prompt-button" href="#">Update prompts</a>
 							</p>
 						</div>
 					</div>
-
 					<div class="flex-1 overflow-y-auto" id="qa-list"></div>
 
 					<div class="flex-1 overflow-y-auto hidden" id="conversation-list"></div>
 
-					<div id="in-progress" class="pl-4 pt-2 flex items-center hidden">
-						<div class="typing">Thinking</div>
-						<div class="spinner">
-							<div class="bounce1"></div>
-							<div class="bounce2"></div>
-							<div class="bounce3"></div>
-						</div>
-
-						<button id="stop-button" class="btn btn-primary flex items-end p-1 pr-2 rounded-md ml-5">
-							<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 mr-2"><path stroke-linecap="round" stroke-linejoin="round" d="M9.75 9.75l4.5 4.5m0-4.5l-4.5 4.5M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>Stop responding</button>
-					</div>
-
+					
 					<div class="p-4 flex items-center pt-2">
 						<div class="flex-1 textarea-wrapper">
 							<textarea
 								type="text"
 								rows="1"
 								id="question-input"
-								placeholder="Ask a question..."
+								placeholder="请输入描述来生成代码"
 								onInput="this.parentNode.dataset.replicatedValue = this.value"></textarea>
 						</div>
-						<div id="chat-button-wrapper" class="absolute bottom-14 items-center more-menu right-8 border border-gray-200 shadow-xl hidden text-xs">
-							<button class="flex gap-2 items-center justify-start p-2 w-full" id="clear-button"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" /></svg>&nbsp;New chat</button>	
-							<button class="flex gap-2 items-center justify-start p-2 w-full" id="list-conversations-button"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4"><path stroke-linecap="round" stroke-linejoin="round" d="M20.25 8.511c.884.284 1.5 1.128 1.5 2.097v4.286c0 1.136-.847 2.1-1.98 2.193-.34.027-.68.052-1.02.072v3.091l-3-3c-1.354 0-2.694-.055-4.02-.163a2.115 2.115 0 01-.825-.242m9.345-8.334a2.126 2.126 0 00-.476-.095 48.64 48.64 0 00-8.048 0c-1.131.094-1.976 1.057-1.976 2.192v4.286c0 .837.46 1.58 1.155 1.951m9.345-8.334V6.637c0-1.621-1.152-3.026-2.76-3.235A48.455 48.455 0 0011.25 3c-2.115 0-4.198.137-6.24.402-1.608.209-2.76 1.614-2.76 3.235v6.226c0 1.621 1.152 3.026 2.76 3.235.577.075 1.157.14 1.74.194V21l4.155-4.155" /></svg>&nbsp;Show conversations</button>
-							<button class="flex gap-2 items-center justify-start p-2 w-full" id="settings-button"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4"><path stroke-linecap="round" stroke-linejoin="round" d="M9.594 3.94c.09-.542.56-.94 1.11-.94h2.593c.55 0 1.02.398 1.11.94l.213 1.281c.063.374.313.686.645.87.074.04.147.083.22.127.324.196.72.257 1.075.124l1.217-.456a1.125 1.125 0 011.37.49l1.296 2.247a1.125 1.125 0 01-.26 1.431l-1.003.827c-.293.24-.438.613-.431.992a6.759 6.759 0 010 .255c-.007.378.138.75.43.99l1.005.828c.424.35.534.954.26 1.43l-1.298 2.247a1.125 1.125 0 01-1.369.491l-1.217-.456c-.355-.133-.75-.072-1.076.124a6.57 6.57 0 01-.22.128c-.331.183-.581.495-.644.869l-.213 1.28c-.09.543-.56.941-1.11.941h-2.594c-.55 0-1.02-.398-1.11-.94l-.213-1.281c-.062-.374-.312-.686-.644-.87a6.52 6.52 0 01-.22-.127c-.325-.196-.72-.257-1.076-.124l-1.217.456a1.125 1.125 0 01-1.369-.49l-1.297-2.247a1.125 1.125 0 01.26-1.431l1.004-.827c.292-.24.437-.613.43-.992a6.932 6.932 0 010-.255c.007-.378-.138-.75-.43-.99l-1.004-.828a1.125 1.125 0 01-.26-1.43l1.297-2.247a1.125 1.125 0 011.37-.491l1.216.456c.356.133.751.072 1.076-.124.072-.044.146-.087.22-.128.332-.183.582-.495.644-.869l.214-1.281z" /><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /></svg>&nbsp;Update settings</button>
-							<button class="flex gap-2 items-center justify-start p-2 w-full" id="export-button"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4"><path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" /></svg>&nbsp;Export to markdown</button>
-						</div>
+						
 						<div id="question-input-buttons" class="right-6 absolute p-0.5 ml-5 flex items-center gap-2">
-							<button id="more-button" title="More actions" class="rounded-lg p-0.5">
-								<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6.75a.75.75 0 110-1.5.75.75 0 010 1.5zM12 12.75a.75.75 0 110-1.5.75.75 0 010 1.5zM12 18.75a.75.75 0 110-1.5.75.75 0 010 1.5z" /></svg>
-							</button>
+							
 
 							<button id="ask-button" title="Submit prompt" class="ask-button rounded-lg p-0.5">
 								<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5"><path stroke-linecap="round" stroke-linejoin="round" d="M6 12L3.269 3.126A59.768 59.768 0 0121.485 12 59.77 59.77 0 013.27 20.876L5.999 12zm0 0h7.5" /></svg>
@@ -573,12 +523,5 @@ export default class ChatGptViewProvider implements vscode.WebviewViewProvider {
 			</html>`;
 	}
 
-	private getRandomId() {
-		let text = '';
-		const possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-		for (let i = 0; i < 32; i++) {
-			text += possible.charAt(Math.floor(Math.random() * possible.length));
-		}
-		return text;
-	}
+
 }

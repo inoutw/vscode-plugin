@@ -50,8 +50,8 @@ h5,
 h6,
 hr,
 p {
-    margin-block-start: 1em !important;
-    margin-block-end: 1em !important;
+    /* margin-block-start: 0.5em !important;
+    margin-block-end: 1em !important; */
     margin-inline-start: 0px !important;
     margin-inline-end: 0px !important;
 }
@@ -76,11 +76,10 @@ h2 {
 
 h3 {
     font-size: .93em !important;
-    margin-top: 1em !important;
-    margin-bottom: 1em !important;
+    margin-top: 0.63em;
+    margin-bottom: 0.63em;
     margin-left: 0 !important;
     margin-right: 0 !important;
-    font-weight: bold !important;
 }
 
 h4 {
@@ -112,6 +111,12 @@ h6 {
 
 code {
     font-family: var(--vscode-editor-font-family) !important;
+}
+
+.ai-title img {
+    width: 20px;
+    height: 20px;
+    margin-right: 6px;
 }
 
 button {
@@ -191,6 +196,12 @@ textarea::placeholder {
 .spinner .bounce2 {
     -webkit-animation-delay: -0.16s;
     animation-delay: -0.16s;
+}
+
+.img-logo {
+    width: 46px;
+    display: flex;
+    align-self: center;
 }
 
 @-webkit-keyframes sk-bouncedelay {
