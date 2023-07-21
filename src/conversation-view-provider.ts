@@ -134,7 +134,7 @@ export default class ChatGptViewProvider implements vscode.WebviewViewProvider {
 		this.inProgress = false;
 		this.sendMessage({ type: 'showInProgress', inProgress: this.inProgress });
 		const responseInMarkdown = true;
-		this.sendMessage({ type: 'addResponse', value: this.response, done: true, id: this.currentMessageId, autoScroll: this.autoScroll, responseInMarkdown });
+		// this.sendMessage({ type: 'addResponse', value: this.response, done: true, id: this.currentMessageId, autoScroll: this.autoScroll, responseInMarkdown });
 		this.logEvent("stopped-generating");
 	}
 
@@ -252,7 +252,7 @@ export default class ChatGptViewProvider implements vscode.WebviewViewProvider {
 
 		this.questionCounter++;
 
-		this.logEvent("api-request-sent", { "chatgpt.command": options.command, "chatgpt.hasCode": String(!!options.code), "chatgpt.hasPreviousAnswer": String(!!options.previousAnswer) });
+		this.logEvent("api-request-sent", { "aily.command": options.command, "aily.hasCode": String(!!options.code), "aily.hasPreviousAnswer": String(!!options.previousAnswer) });
 
 		if (!await this.prepareConversation()) {
 			return;
@@ -372,16 +372,17 @@ export default class ChatGptViewProvider implements vscode.WebviewViewProvider {
 		const thisfetch = globalThis.fetch;
 		try {
 			const body = JSON.stringify({ function_code: code, function_description: description });
-			let res = await thisfetch(`${this.apiQueryBaseUrl}/add_data`, { headers: { 'Content-Type': 'application/json' }, method: 'POST', body });
-			res = await res.json();
+			await thisfetch(`${this.apiQueryBaseUrl}/add_data`, { headers: { 'Content-Type': 'application/json' }, method: 'POST', body });
 			if (sendMsg) {
 				this.sendMessage({ type: 'addRepoResponse', value: 'success' });
 			}
 			return Promise.resolve('success');
-		} catch {
+		} catch (error) {
 			if (sendMsg) {
 				this.sendMessage({ type: 'addRepoResponse', value: 'failed' });
 			}
+			console.error('addToRepo api::', error);
+
 			return Promise.reject('failed');
 
 		}
@@ -466,6 +467,15 @@ export default class ChatGptViewProvider implements vscode.WebviewViewProvider {
 
 					<div class="flex-1 overflow-y-auto hidden" id="conversation-list"></div>
 
+					<div id="in-progress" class="pl-4 pt-2 flex items-center hidden">
+						<div class="typing">AI正在思考中</div>
+						<div class="spinner">
+							<div class="bounce1"></div>
+							<div class="bounce2"></div>
+							<div class="bounce3"></div>
+						</div>
+
+					</div>
 					
 					<div class="p-4 flex items-center pt-2">
 						<div class="flex-1 textarea-wrapper">

@@ -57,10 +57,12 @@
                 }, 2000);
                 break;
             case "showInProgress":
-                if (message.showStopButton) {
-                    document.getElementById("stop-button").classList.remove("hidden");
+                const stopBtn = document.getElementById('stop-button');
+
+                if (message.showStopButton && stopBtn?.classList) {
+                    stopBtn.classList.remove("hidden");
                 } else {
-                    document.getElementById("stop-button").classList.add("hidden");
+                    stopBtn?.classList && stopBtn.classList.add("hidden");
                 }
 
                 if (message.inProgress) {
@@ -109,6 +111,7 @@
                 if (!message.responseInMarkdown) {
                     updatedValue = "```\r\n" + unEscapeHtml(message.value) + " \r\n ```";
                 } else {
+                    // 如果markdown文本没有结束，则让他结束
                     updatedValue = message.value.split("```").length % 2 === 1 ? message.value : message.value + "\n\n```\n\n";
                 }
 
