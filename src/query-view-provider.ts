@@ -25,7 +25,7 @@ export default class QueryViewProvider {
                         const editor = vscode.window.activeTextEditor || vscode.window.visibleTextEditors.at(0);
                         // console.log('editor--', editor);
                         editor?.edit(editBuilder => {
-                            editBuilder.insert(editor.selection.start, message.text);
+                            editBuilder.insert(editor.selection.start, message.value);
                         });
                     });
                     break;
@@ -33,13 +33,12 @@ export default class QueryViewProvider {
                 case "searchCode":
                     const thisfetch = globalThis.fetch;
                     try {
-                        const body = JSON.stringify({ query: message.value });
-                        let res = await thisfetch('http://127.0.0.1:5000/query', { headers: { 'Content-Type': 'application/json' }, method: 'POST', body });
-                        this.sendMessage(panel, { type: 'addRepoResponse', value: res });
-                        console.log('success--');
+                        const body = JSON.stringify({ function_description: message.value });
+                        let res = await thisfetch('http://127.0.0.1:5000/search_functions', { headers: { 'Content-Type': 'application/json' }, method: 'POST', body });
+                        res = await res.json();
+                        this.sendMessage(panel, { type: 'searchCodeResponse', value: res });
                     } catch {
-                        console.log('failed--');
-                        this.sendMessage(panel, { type: 'addRepoResponse', value: { data: 'failed' } });
+                        this.sendMessage(panel, { type: 'searchCodeResponse', value: 'failed' });
                     }
                     break;
                 default:

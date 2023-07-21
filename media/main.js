@@ -22,7 +22,7 @@
 
     const userSvg = `<?xml version="1.0" standalone="no"?><!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd"><svg t="1689660922627" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="14976" width="20" height="20" xmlns:xlink="http://www.w3.org/1999/xlink"><path d="M629.546667 640a95.957333 95.957333 0 0 1 95.914666 95.957333v24.533334c0 38.144-13.653333 75.093333-38.4 104.064C620.032 942.762667 518.186667 981.333333 384 981.333333s-236.032-38.613333-302.848-116.906666a160 160 0 0 1-38.314667-103.850667v-24.661333a95.957333 95.957333 0 0 1 95.957334-96h490.752z m0 64H138.752a31.957333 31.957333 0 0 0-32 31.957333v24.661334c0 22.826667 8.192 44.928 23.04 62.293333 53.461333 62.634667 137.386667 94.464 254.165333 94.464 116.864 0 200.789333-31.829333 254.421334-94.464a96 96 0 0 0 23.04-62.421333v-24.533334a31.957333 31.957333 0 0 0-31.914667-32z m183.466666-644.096a32 32 0 0 1 43.648 11.904A541.610667 541.610667 0 0 1 928 341.333333c0 96.170667-25.002667 188.757333-71.808 270.336a32 32 0 0 1-55.509333-31.829333A477.610667 477.610667 0 0 0 864 341.333333c0-84.608-21.888-165.973333-62.933333-237.781333a32 32 0 0 1 11.946666-43.648zM384 128.170667a213.333333 213.333333 0 1 1 0 426.666666 213.333333 213.333333 0 0 1 0-426.666666z m281.130667 16.853333a32 32 0 0 1 43.648 12.032A371.754667 371.754667 0 0 1 757.333333 341.333333c0 65.621333-16.981333 128.853333-48.768 184.661334a32 32 0 1 1-55.637333-31.701334A307.754667 307.754667 0 0 0 693.333333 341.333333a307.754667 307.754667 0 0 0-40.192-152.661333 32 32 0 0 1 11.946667-43.648zM384 192.213333a149.333333 149.333333 0 1 0 0 298.666667 149.333333 149.333333 0 0 0 0-298.666667z" fill="#ffffff" p-id="14977"></path></svg>`;
 
-    const clipboardSvg = `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4"><path stroke-linecap="round" stroke-linejoin="round" d="M15.666 3.888A2.25 2.25 0 0013.5 2.25h-3c-1.03 0-1.9.693-2.166 1.638m7.332 0c.055.194.084.4.084.612v0a.75.75 0 01-.75.75H9a.75.75 0 01-.75-.75v0c0-.212.03-.418.084-.612m7.332 0c.646.049 1.288.11 1.927.184 1.1.128 1.907 1.077 1.907 2.185V19.5a2.25 2.25 0 01-2.25 2.25H6.75A2.25 2.25 0 014.5 19.5V6.257c0-1.108.806-2.057 1.907-2.185a48.208 48.208 0 011.927-.184" /></svg>`;
+    const clipboardSvg = `<?xml version="1.0" standalone="no"?><!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd"><svg t="1689911395957" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="1579" width="16" height="16" xmlns:xlink="http://www.w3.org/1999/xlink"><path d="M720 192h-544A80.096 80.096 0 0 0 96 272v608C96 924.128 131.904 960 176 960h544c44.128 0 80-35.872 80-80v-608C800 227.904 764.128 192 720 192z m16 688c0 8.8-7.2 16-16 16h-544a16 16 0 0 1-16-16v-608a16 16 0 0 1 16-16h544a16 16 0 0 1 16 16v608z" p-id="1580" fill="#ffffff"></path><path d="M848 64h-544a32 32 0 0 0 0 64h544a16 16 0 0 1 16 16v608a32 32 0 1 0 64 0v-608C928 99.904 892.128 64 848 64z" p-id="1581" fill="#ffffff"></path><path d="M608 360H288a32 32 0 0 0 0 64h320a32 32 0 1 0 0-64zM608 520H288a32 32 0 1 0 0 64h320a32 32 0 1 0 0-64zM480 678.656H288a32 32 0 1 0 0 64h192a32 32 0 1 0 0-64z" p-id="1582" fill="#ffffff"></path></svg>`;
 
     const checkSvg = `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" /></svg>`;
 
@@ -49,11 +49,11 @@
         const addRepoBtn = document.getElementById('add-repo') || {};
         switch (message.type) {
             case "addRepoResponse":
-                const result = message.value == 'success' ? `${checkSvg} Added` : `${cancelSvg} Failed`;
+                const result = message.value == 'success' ? `${checkSvg} 已入库` : `${cancelSvg} 入库失败`;
                 addRepoBtn.innerHTML = result;
 
                 setTimeout(() => {
-                    addRepoBtn.innerHTML = `${plusSvg} Add`;
+                    addRepoBtn.innerHTML = `${plusSvg} 入库`;
                 }, 2000);
                 break;
             case "showInProgress":
@@ -135,11 +135,11 @@
                         buttonWrapper.classList.add("code-actions-wrapper", "flex", "gap-3", "pr-2", "pt-1", "pb-1", "flex-wrap", "items-center", "justify-end", "rounded-t-lg", "input-background");
 
                         // Create copy to clipboard button
-                        // const copyButton = document.createElement("button");
-                        // copyButton.title = "Copy to clipboard";
-                        // copyButton.innerHTML = `${clipboardSvg} Copy`;
+                        const copyButton = document.createElement("button");
+                        copyButton.title = "复制到剪贴板";
+                        copyButton.innerHTML = `${clipboardSvg} 复制`;
 
-                        // copyButton.classList.add("code-element-ext", "p-1", "pr-2", "flex", "items-center", "rounded-lg");
+                        copyButton.classList.add("code-element-ext", "p-1", "pr-2", "flex", "items-center", "rounded-lg");
 
                         const insert = document.createElement("button");
                         insert.title = "Insert the below code to the current file";
@@ -148,13 +148,13 @@
                         insert.classList.add("edit-element-ext", "p-1", "pr-2", "flex", "items-center", "rounded-lg");
 
                         const addToRepo = document.createElement("button");
-                        addToRepo.title = "Add the code to repository";
-                        addToRepo.innerHTML = `${plusSvg} Add`;
+                        addToRepo.title = "将代码添加到代码库";
+                        addToRepo.innerHTML = `${plusSvg} 入库`;
                         addToRepo.id = 'add-repo';
 
                         addToRepo.classList.add("add-code-element-ext", "p-1", "pr-2", "flex", "items-center", "rounded-lg");
 
-                        buttonWrapper.append(addToRepo);
+                        buttonWrapper.append(copyButton, addToRepo);
 
                         if (preCode.parentNode.previousSibling) {
                             preCode.parentNode.parentNode.insertBefore(buttonWrapper, preCode.parentNode.previousSibling);
@@ -417,10 +417,10 @@
         if (targetButton?.classList?.contains("code-element-ext")) {
             e.preventDefault();
             navigator.clipboard.writeText(targetButton.parentElement?.nextElementSibling?.lastChild?.textContent).then(() => {
-                targetButton.innerHTML = `${checkSvg} Copied`;
+                targetButton.innerHTML = `${checkSvg} 已复制`;
 
                 setTimeout(() => {
-                    targetButton.innerHTML = `${clipboardSvg} Copy`;
+                    targetButton.innerHTML = `${clipboardSvg} 复制`;
                 }, 1500);
             });
 

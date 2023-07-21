@@ -21,17 +21,8 @@
   ],
   "keywords": [
     "chatgpt",
-    "lamda",
-    "bard",
     "gpt",
-    "gpt3",
-    "gpt3.5",
-    "gpt4",
-    "codex",
     "openai",
-    "testing",
-    "find bugs",
-    "copilot",
     "ai"
   ],
   "activationEvents": [
@@ -113,13 +104,13 @@
         },
         "chatgpt.promptPrefix.generateCode": {
           "type": "string",
-          "default": "请为以下描述生成C++代码，",
+          "default": "请生成C++代码，满足如下要求",
           "description": "The prompt prefix used for generate code for the input content",
           "order": 7
         },
         "chatgpt.promptPrefix.explain": {
           "type": "string",
-          "default": "请解释下面这段代码",
+          "default": "请解释这段代码",
           "description": "The prompt prefix used for explaining the selected code",
           "order": 14
         },
