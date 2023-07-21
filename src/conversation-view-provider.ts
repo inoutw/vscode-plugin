@@ -28,7 +28,10 @@ export default class ChatGptViewProvider implements vscode.WebviewViewProvider {
 	private abortController?: AbortController;
 	private currentMessageId: string = "";
 	private response: string = "";
-	private apiKey: string = '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';
+	// private apiKey: string = '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';
+	private apiKey: string = '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';
+	private apiAiBaseUrl: string = 'https://121.40.104.79';
+	private apiQueryBaseUrl: string = 'http://127.0.0.1:5000';
 	private username: string;
 	private description: string = '';
 
@@ -39,12 +42,11 @@ export default class ChatGptViewProvider implements vscode.WebviewViewProvider {
 	 */
 	private leftOverMessage?: any;
 	constructor(private context: vscode.ExtensionContext) {
-		this.subscribeToResponse = vscode.workspace.getConfiguration("chatgpt").get("response.showNotification") || false;
+		this.subscribeToResponse = false;
 		this.autoScroll = true;
-		this.model = vscode.workspace.getConfiguration("chatgpt").get("gpt3.model") as string;
-		this.username = vscode.workspace.getConfiguration("chatgpt").get("username") as string;
+		this.model = vscode.workspace.getConfiguration("aily").get("llm.model") as string;
+		this.username = vscode.workspace.getConfiguration("aily").get("username") as string;
 		this.setMethod();
-		this.setProfilePath();
 		this.setAuthType();
 	}
 
@@ -77,7 +79,7 @@ export default class ChatGptViewProvider implements vscode.WebviewViewProvider {
 					if (this.questionCounter === 0) {
 						this.description = data.value;
 					}
-					const prompt = vscode.workspace.getConfiguration("chatgpt").get<string>(`promptPrefix.generateCode`) || '';
+					const prompt = vscode.workspace.getConfiguration("aily").get<string>(`promptPrefix.generateCode`) || '';
 					this.sendApiRequest(`${prompt}: ${data.value}`, { command: "generateCode" });
 					break;
 				case 'addToRepo':
@@ -89,43 +91,20 @@ export default class ChatGptViewProvider implements vscode.WebviewViewProvider {
 
 					this.logEvent("code-inserted");
 					break;
-				case 'openNew':
-					const document = await vscode.workspace.openTextDocument({
-						content: data.value,
-						language: data.language
-					});
-					vscode.window.showTextDocument(document);
-
-					this.logEvent(data.language === "markdown" ? "code-exported" : "code-opened");
-					break;
 				case 'clearConversation':
 					this.messageId = undefined;
 					this.conversationId = undefined;
 
 					this.logEvent("conversation-cleared");
 					break;
-				case 'clearBrowser':
-					this.logEvent("browser-cleared");
-					break;
-				case 'cleargpt3':
-					this.logEvent("gpt3-cleared");
-					break;
-				case 'login':
-					this.prepareConversation().then(success => {
-						if (success) {
-							this.sendMessage({ type: 'loginSuccessful', showConversations: this.useAutoLogin }, true);
 
-							this.logEvent("logged-in");
-						}
-					});
-					break;
 				case 'openSettings':
-					vscode.commands.executeCommand('workbench.action.openSettings', "@ext:YOUR_PUBLISHER_NAME.vscode-chatgpt chatgpt.");
+					vscode.commands.executeCommand('workbench.action.openSettings', "@ext:YOUR_PUBLISHER_NAME.aily aily.");
 
 					this.logEvent("settings-opened");
 					break;
 				case 'openSettingsPrompt':
-					vscode.commands.executeCommand('workbench.action.openSettings', "@ext:YOUR_PUBLISHER_NAME.vscode-chatgpt promptPrefix");
+					vscode.commands.executeCommand('workbench.action.openSettings', "@ext:YOUR_PUBLISHER_NAME.aily promptPrefix");
 
 					this.logEvent("settings-prompt-opened");
 					break;
@@ -179,11 +158,6 @@ export default class ChatGptViewProvider implements vscode.WebviewViewProvider {
 		this.clearSession();
 	}
 
-	public setProfilePath(): void {
-		this.profilePath = vscode.workspace.getConfiguration("chatgpt").get("profilePath");
-		this.clearSession();
-	}
-
 	private get isGpt35Model(): boolean {
 		return !!this.model?.startsWith("gpt-");
 	}
@@ -195,16 +169,13 @@ export default class ChatGptViewProvider implements vscode.WebviewViewProvider {
 		}
 
 		const state = this.context.globalState;
-		const configuration = vscode.workspace.getConfiguration("chatgpt");
+		const configuration = vscode.workspace.getConfiguration("aily");
 		if (this.useGpt3) {
 			if ((this.isGpt35Model && !this.apiGpt35) || (!this.isGpt35Model) || modelChanged) {
 				// let apiKey = configuration.get("gpt3.apiKey") as string || state.get("chatgpt-gpt3-apiKey") as string;
 				let apiKey = this.apiKey;
-				const organization = configuration.get("gpt3.organization") as string;
-				const max_tokens = configuration.get("gpt3.maxTokens") as number;
 				const temperature = 1;
-				const top_p = 1;
-				const apiBaseUrl = configuration.get("gpt3.apiBaseUrl") as string;
+				const apiBaseUrl = this.apiAiBaseUrl;
 
 				if (!apiKey) {
 					/**
@@ -244,12 +215,9 @@ export default class ChatGptViewProvider implements vscode.WebviewViewProvider {
 						apiKey,
 						fetch: fetch,
 						apiBaseUrl: apiBaseUrl?.trim() || undefined,
-						organization,
 						completionParams: {
 							model: this.model,
-							max_tokens,
 							temperature,
-							top_p,
 						}
 					});
 				}
@@ -296,7 +264,7 @@ export default class ChatGptViewProvider implements vscode.WebviewViewProvider {
 
 		// If the ChatGPT view is not in focus/visible; focus on it to render Q&A
 		if (this.webView == null) {
-			vscode.commands.executeCommand('vscode-chatgpt.view.focus');
+			vscode.commands.executeCommand('aily.conversation.view.focus');
 		} else {
 			this.webView?.show?.(true);
 		}
@@ -404,7 +372,7 @@ export default class ChatGptViewProvider implements vscode.WebviewViewProvider {
 		const thisfetch = globalThis.fetch;
 		try {
 			const body = JSON.stringify({ function_code: code, function_description: description });
-			let res = await thisfetch('http://127.0.0.1:5000/add_data', { headers: { 'Content-Type': 'application/json' }, method: 'POST', body });
+			let res = await thisfetch(`${this.apiQueryBaseUrl}/add_data`, { headers: { 'Content-Type': 'application/json' }, method: 'POST', body });
 			res = await res.json();
 			if (sendMsg) {
 				this.sendMessage({ type: 'addRepoResponse', value: 'success' });

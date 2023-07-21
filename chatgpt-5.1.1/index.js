@@ -66,7 +66,12 @@ async function* streamAsyncIterable(stream) {
 async function fetchSSE(url, options, fetch2 = fetch) {
   const { onMessage, ...fetchOptions } = options;
 
-  const res = await fetch2(url, fetchOptions);
+  let res;
+  try {
+    res = await fetch2(url, fetchOptions);
+  } catch (err) {
+    console.error("fetchSSE failed", err);
+  }
   if (!res.ok) {
     let reason;
     try {
@@ -148,8 +153,7 @@ var ChatGPTAPI = class {
     this._completionParams = {
       model: CHATGPT_MODEL,
       temperature: 0.8,
-      top_p: 1,
-      presence_penalty: 1,
+      presence_penalty: 0,
       ...completionParams
     };
     this._systemMessage = systemMessage;
@@ -283,7 +287,10 @@ Current date: ${currentDate}`;
               }
             },
             this._fetch
-          ).catch(reject);
+          ).catch((reason) => {
+            console.error('fetchSSE error:', reason);
+            reject(reason);
+          });
         } else {
           try {
             const res = await this._fetch(url, {
@@ -359,17 +366,16 @@ Current date: ${currentDate}`;
     const assistantLabel = ASSISTANT_LABEL_DEFAULT;
     let messages = [];
     if (systemMessage) {
-      messages.push({
-        role: "system",
-        content: systemMessage
-      });
+      // messages.push({
+      //   role: "system",
+      //   content: systemMessage
+      // });
     }
     const systemMessageOffset = messages.length;
     let nextMessages = text ? messages.concat([
       {
         role: "user",
-        content: text,
-        name: opts.name
+        content: text
       }
     ]) : messages;
     do {
@@ -398,8 +404,7 @@ ${message.content}`]);
       nextMessages = nextMessages.slice(0, systemMessageOffset).concat([
         {
           role: parentMessageRole,
-          content: parentMessage.text,
-          name: parentMessage.name
+          content: parentMessage.text
         },
         ...nextMessages.slice(systemMessageOffset)
       ]);

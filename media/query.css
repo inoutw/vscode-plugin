@@ -3,7 +3,6 @@
     padding-top: 6px;
 }
 
-
 h4.error {
     color: burlywood;
 }
@@ -67,6 +66,13 @@ h4.error {
     height: 20px;
 }
 
+.item-wrap .subtxt {
+    font-size: 10px;
+    color: rgba(255, 255, 255, 0.6);
+    display: inline-block;
+    width: 80px;
+}
+
 #result {
     width: calc(100%);
 }
@@ -79,14 +85,25 @@ h4.error {
 
 }
 
+#result .item-wrap .title {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+#result .item-wrap .title .right {
+    align-self: flex-end;
+
+}
+
 #result .title {
     display: flex;
     border-bottom: 1px solid #444;
-    padding: 10px;
+    padding: 8px;
 }
 
 #result .title .txt {
-    width: calc(100% - 60px);
+    width: 75%;
 }
 
 #result .content {
@@ -102,7 +119,6 @@ h4.error {
 
 #result .apply {
     color: blueviolet;
-    margin-left: 10px;
     cursor: pointer;
     display: inline-block;
     padding: 2px 10px;

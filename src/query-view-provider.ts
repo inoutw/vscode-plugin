@@ -5,6 +5,7 @@ import * as vscode from 'vscode';
 import { focusEditor, getRandomId, getWebviewOptions } from './utils';
 export default class QueryViewProvider {
     public static readonly viewType = 'codeQueryPanel';
+    private apiQueryBaseUrl = 'http://127.0.0.1:5000';
     constructor(private context: vscode.ExtensionContext) {
     }
     public show(): void | Thenable<void> {
@@ -34,7 +35,7 @@ export default class QueryViewProvider {
                     const thisfetch = globalThis.fetch;
                     try {
                         const body = JSON.stringify({ function_description: message.value });
-                        let res = await thisfetch('http://127.0.0.1:5000/search_functions', { headers: { 'Content-Type': 'application/json' }, method: 'POST', body });
+                        let res = await thisfetch(`${this.apiQueryBaseUrl}/search_functions`, { headers: { 'Content-Type': 'application/json' }, method: 'POST', body });
                         res = await res.json();
                         this.sendMessage(panel, { type: 'searchCodeResponse', value: res });
                     } catch {
