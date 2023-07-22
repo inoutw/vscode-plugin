@@ -44,7 +44,7 @@ h4.error {
     border-bottom-right-radius: 0;
     background-color: transparent;
     color: var(--vscode-editor-foreground);
-    height: 20px;
+    height: 30px;
 }
 
 #btnSearch {

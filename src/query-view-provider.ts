@@ -72,7 +72,7 @@ export default class QueryViewProvider {
         const vendorHighlightCss = webview.asWebviewUri(vscode.Uri.joinPath(this.context.extensionUri, 'media', 'vendor', 'highlight.min.css'));
         const vendorHighlightJs = webview.asWebviewUri(vscode.Uri.joinPath(this.context.extensionUri, 'media', 'vendor', 'highlight.min.js'));
         const vendorMarkedJs = webview.asWebviewUri(vscode.Uri.joinPath(this.context.extensionUri, 'media', 'vendor', 'marked.min.js'));
-        // const vendorTailwindJs = webview.asWebviewUri(vscode.Uri.joinPath(this.context.extensionUri, 'media', 'vendor', 'tailwindcss.3.2.4.min.js'));
+        const vendorTailwindJs = webview.asWebviewUri(vscode.Uri.joinPath(this.context.extensionUri, 'media', 'vendor', 'tailwindcss.3.2.4.min.js'));
         const vendorTurndownJs = webview.asWebviewUri(vscode.Uri.joinPath(this.context.extensionUri, 'media', 'vendor', 'turndown.js'));
 
         const searchIcon = webview.asWebviewUri(vscode.Uri.joinPath(this.context.extensionUri, 'media', 'images', 'search.svg'));
@@ -89,10 +89,11 @@ export default class QueryViewProvider {
           <script src="${vendorHighlightJs}"></script>
 		  <script src="${vendorMarkedJs}"></script>
 		  <script src="${vendorTurndownJs}"></script>
+		  <script src="${vendorTailwindJs}"></script>
         </head>
         <body>
         <div class="title">${notice}</div>
-        <div class="container">
+        <div class="query-wrap">
           <div class="search-bar">
             <label for="keywords">${keywords}:</label>
             <input type="text" id="keywords" >
