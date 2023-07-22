@@ -76,13 +76,6 @@
           "id": "aily.conversation.view",
           "name": "生成代码"
         }
-      ],
-      "aily-code-query": [
-        {
-          "type": "webview",
-          "id": "aily.query.view",
-          "name": "代码检索"
-        }
       ]
     },
     "configuration": {
