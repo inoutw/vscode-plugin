@@ -49,12 +49,12 @@
         const addRepoBtn = document.getElementById('add-repo') || {};
         switch (message.type) {
             case "addRepoResponse":
-                const result = message.value == 'success' ? `${checkSvg} 已入库` : `${cancelSvg} 入库失败`;
-                addRepoBtn.innerHTML = result;
+                // const result = message.value == 'success' ? `${checkSvg} 已入库` : `${cancelSvg} 入库失败`;
+                // addRepoBtn.innerHTML = result;
 
-                setTimeout(() => {
-                    addRepoBtn.innerHTML = `${plusSvg} 入库`;
-                }, 2000);
+                // setTimeout(() => {
+                //     addRepoBtn.innerHTML = `${plusSvg} 入库`;
+                // }, 2000);
                 break;
             case "showInProgress":
                 const stopBtn = document.getElementById('stop-button');

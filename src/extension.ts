@@ -87,11 +87,12 @@ export async function activate(context: vscode.ExtensionContext) {
 			.then((value) => {
 				console.log('value', value);
 				if (value) {
-					provider.addToRepo({ code: selection, description: value }, false).then(res => {
-						vscode.window.showInformationMessage('已入库');
-					}).catch(res => {
-						vscode.window.showErrorMessage('入库失败');
-					});
+					provider.addToRepo({ code: selection, description: value }, false);
+					// .then(res => {
+					// 	vscode.window.showInformationMessage('已入库');
+					// }).catch(res => {
+					// 	vscode.window.showErrorMessage('入库失败');
+					// });
 				}
 			});
 

@@ -367,23 +367,20 @@ export default class ChatGptViewProvider implements vscode.WebviewViewProvider {
 	 * 将代码和描述入库
 	 * @param  
 	 */
-	public async addToRepo({ code, description = this.description }: any, sendMsg = true): Promise<string> {
+	public async addToRepo({ code, description = this.description }: any, sendMsg = true) {
 
 		const thisfetch = globalThis.fetch;
 		try {
 			const body = JSON.stringify({ function_code: code, function_description: description });
-			await thisfetch(`${this.apiQueryBaseUrl}/add_data`, { headers: { 'Content-Type': 'application/json' }, method: 'POST', body });
-			if (sendMsg) {
-				this.sendMessage({ type: 'addRepoResponse', value: 'success' });
-			}
-			return Promise.resolve('success');
+			thisfetch(`${this.apiQueryBaseUrl}/add_data`, { headers: { 'Content-Type': 'application/json' }, method: 'POST', body }).then(res => {
+				vscode.window.showInformationMessage('已入库');
+			});
+			// if (sendMsg) {
+			// 	this.sendMessage({ type: 'addRepoResponse', value: 'success' });
+			// }
+			// return Promise.resolve('success');
 		} catch (error) {
-			if (sendMsg) {
-				this.sendMessage({ type: 'addRepoResponse', value: 'failed' });
-			}
-			console.error('addToRepo api::', error);
-
-			return Promise.reject('failed');
+			vscode.window.showInformationMessage('入库失败');
 
 		}
 	}
