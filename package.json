@@ -65,14 +65,7 @@
         {
           "id": "conversation-view-container",
           "title": "Aily",
-          "icon": "images/code-ai.png"
-        }
-      ],
-      "panel": [
-        {
-          "id": "aily-code-query",
-          "title": "从代码库中检索代码",
-          "icon": "images/query.svg"
+          "icon": "images/code-ai-30.png"
         }
       ]
     },
@@ -105,12 +98,7 @@
           "type": "string",
           "default": "请生成C++代码，满足如下要求",
           "description": "The prompt prefix used for generate code for the input content",
-          "order": 7
-        },
-        "aily.chatgpt.apiKey": {
-          "type": "string",
-          "markdownDescription": "OpenAI API key. [Get your API Key from OpenAI](https://beta.openai.com/account/api-keys). \n\n**Please enable OpenAI API Key method to use this setting.**",
-          "order": 18
+          "order": 2
         },
         "aily.llm.model": {
           "type": "string",
@@ -118,8 +106,8 @@
             "gpt-4",
             "gpt-3.5-turbo"
           ],
-          "default": "gpt-3.5-turbo",
-          "order": 21,
+          "default": "gpt-4",
+          "order": 3,
           "enumItemLabels": [
             "Browser autologin - ChatGPT Plus GPT-4",
             "OpenAI API Key - gpt-3.5-turbo"
