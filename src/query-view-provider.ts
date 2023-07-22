@@ -5,7 +5,7 @@ import * as vscode from 'vscode';
 import { focusEditor, getRandomId, getWebviewOptions } from './utils';
 export default class QueryViewProvider {
     public static readonly viewType = 'codeQueryPanel';
-    private apiQueryBaseUrl = 'http://127.0.0.1:5000';
+    private apiQueryBaseUrl = 'http://121.40.104.79:5000';
     constructor(private context: vscode.ExtensionContext) {
     }
     public show(): void | Thenable<void> {

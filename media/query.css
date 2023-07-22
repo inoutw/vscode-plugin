@@ -93,6 +93,7 @@ h4.error {
 
 #result .item-wrap .title .right {
     align-self: flex-end;
+    min-width: 130px;
 
 }
 
@@ -103,7 +104,7 @@ h4.error {
 }
 
 #result .title .txt {
-    width: 75%;
+    width: calc(100% - 150px);
 }
 
 #result .content {

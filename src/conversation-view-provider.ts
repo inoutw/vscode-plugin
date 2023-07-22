@@ -31,7 +31,7 @@ export default class ChatGptViewProvider implements vscode.WebviewViewProvider {
 	// private apiKey: string = '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';
 	private apiKey: string = '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';
 	private apiAiBaseUrl: string = 'https://121.40.104.79';
-	private apiQueryBaseUrl: string = 'http://127.0.0.1:5000';
+	private apiQueryBaseUrl: string = 'http://121.40.104.79:5000';
 	private username: string;
 	private description: string = '';
 

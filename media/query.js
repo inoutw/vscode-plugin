@@ -33,7 +33,9 @@
 
             const codeRes = hljs.highlight(function_code, { language: 'cpp' }).value;
 
-            const matchRate = similarity * 100 + "%";
+            // const markedResponse = marked.parse(function_code);
+
+            const matchRate = (similarity * 10000 / 100).toFixed(2) + "%";
 
             return `<div class="item-wrap">
                         <div class="title">
