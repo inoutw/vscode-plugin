@@ -40,7 +40,7 @@
     },
     "keybindings": [
       {
-        "command": "aily.generateCode",
+        "command": "aily.addToRepo",
         "key": "ctrl+shift+a",
         "mac": "cmd+shift+a",
         "when": "editorHasSelection"

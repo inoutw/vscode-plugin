@@ -1,18 +1,13 @@
-## License
+Aily 是一款强大的 VSCode 插件，利用人工智能技术帮助开发者通过代码生成和代码检索和应用实现更高效的编码工作流程。它包含代码生成、入库、代码检索和代码应用等功能模块，为开发者提供全方位的代码支持。
 
-If you are developing completely another extension and release it to the public, make sure you follow this.
+## 功能特点:
 
-This project is released under ISC License - See root License for details. Copyright notice and the respective permission notices must appear in all copies.
+代码生成：Aily 基于智能 AI，通过自然语言对话、生成高质量的代码片段。
 
-## How to build and run
+代码入库：插件提供了一个集成的代码入库功能，可以将用户选中的代码片段保存到指定的代码仓库中。这样，开发者可以方便地将有用的代码存档、共享和重复使用，提高代码的可维护性和复用性。
 
-Clone the repository to your local machine
-On the root directory, run yarn command to install the dependencies listed in package.json
-Within VS Code - run the project by simply hitting F5
+代码检索：Aily 集成了强大的代码检索功能，使开发者能够轻松搜索已入库的代码片段。通过智能搜索和过滤机制，插件能够根据关键字、语言、标签等进行快速准确的代码检索，帮助开发者在海量代码库中找到需要的代码，节省时间和提高效率。
 
-## How to install locally
+代码应用：该插件还提供了代码应用的功能，即将检索的代码片段快速应用到当前编辑器中，从而加速编码流程。
 
-Install vsce if you don't have it on your machine (The Visual Studio Code Extension Manager)
-npm install --global vsce
-Run vsce package
-F
+通过 Aily 插件，开发者可以享受到智能代码生成和应用的便利，提高开发效率、减少重复劳动。它为开发者提供了一个更高效、智能化的编码环境，助力开发者更快地完成复杂的编码任务。
