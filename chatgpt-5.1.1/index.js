@@ -47,6 +47,7 @@ var fetch = globalThis.fetch;
 import { createParser } from "eventsource-parser";
 
 // src/stream-async-iterable.ts
+// 将一个流对象转换为一个异步可迭代对象，通过异步迭代器的方式逐个返回流中的数据
 async function* streamAsyncIterable(stream) {
   const reader = stream.getReader();
   try {
@@ -55,14 +56,17 @@ async function* streamAsyncIterable(stream) {
       if (done) {
         return;
       }
+      // 将读取到的 value 值作为生成器的一个元素返回
       yield value;
     }
   } finally {
+    // 释放读取器的锁，以确保资源的正确释放
     reader.releaseLock();
   }
 }
 
 // src/fetch-sse.ts
+// 从服务端获取EventStream流式数据
 async function fetchSSE(url, options, fetch2 = fetch) {
   const { onMessage, ...fetchOptions } = options;
 
@@ -366,10 +370,10 @@ Current date: ${currentDate}`;
     const assistantLabel = ASSISTANT_LABEL_DEFAULT;
     let messages = [];
     if (systemMessage) {
-      // messages.push({
-      //   role: "system",
-      //   content: systemMessage
-      // });
+      messages.push({
+        role: "system",
+        content: systemMessage
+      });
     }
     const systemMessageOffset = messages.length;
     let nextMessages = text ? messages.concat([

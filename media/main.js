@@ -157,7 +157,7 @@
 
                         addToRepo.classList.add("add-code-element-ext", "p-1", "pr-2", "flex", "items-center", "rounded-lg");
 
-                        buttonWrapper.append(copyButton, addToRepo);
+                        buttonWrapper.append(copyButton);
 
                         if (preCode.parentNode.previousSibling) {
                             preCode.parentNode.parentNode.insertBefore(buttonWrapper, preCode.parentNode.previousSibling);
@@ -306,7 +306,8 @@
 
         if (targetButton?.id === "ask-button") {
             e.preventDefault();
-            addFreeTextQuestion();
+            // addFreeTextQuestion();
+            handleGenerateCode();
             return;
         }
 

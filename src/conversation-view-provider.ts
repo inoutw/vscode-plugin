@@ -370,6 +370,7 @@ export default class ChatGptViewProvider implements vscode.WebviewViewProvider {
 	public async addToRepo({ code, description = this.description }: any, sendMsg = true) {
 
 		const thisfetch = globalThis.fetch;
+		// console.log('description', description);
 		try {
 			const body = JSON.stringify({ function_code: code, function_description: description });
 			thisfetch(`${this.apiQueryBaseUrl}/add_data`, { headers: { 'Content-Type': 'application/json' }, method: 'POST', body }).then(res => {
