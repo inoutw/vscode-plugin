@@ -76,7 +76,7 @@ async function fetchSSE(url, options, fetch2 = fetch) {
   } catch (err) {
     console.error("fetchSSE failed", err);
   }
-  if (!res.ok) {
+  if (!res?.ok) {
     let reason;
     try {
       reason = await res.text();
@@ -242,9 +242,12 @@ Current date: ${currentDate}`;
       async (resolve, reject) => {
         var _a, _b;
         const url = `${this._apiBaseUrl}/v1/chat/completions`;
+        // const url = `${this._apiBaseUrl}/openai/deployments/test1/chat/completions?api-version=2023-07-01-preview`;
         const headers = {
           "Content-Type": "application/json",
           Authorization: `Bearer ${this._apiKey}`
+          // Azure服务Header要求
+          // "Api-Key": this._apiKey
         };
         if (this._organization) {
           headers["OpenAI-Organization"] = this._organization;
@@ -303,7 +306,7 @@ Current date: ${currentDate}`;
               body: JSON.stringify(body),
               signal: abortSignal
             });
-            if (!res.ok) {
+            if (!res?.ok) {
               const reason = await res.text();
               const msg = `OpenAI error ${res.status || res.statusText}: ${reason}`;
               const error = new ChatGPTError(msg, { cause: res });

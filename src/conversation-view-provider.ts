@@ -30,6 +30,8 @@ export default class ChatGptViewProvider implements vscode.WebviewViewProvider {
 	private response: string = "";
 	// private apiKey: string = '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';
 	private apiKey: string = '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';
+	// private azureApiKey: string = 'cd475067c8384e20a89fdd7ca0a7d881';
+	// private azureUrl: string = 'https://koteiopenai.openai.azure.com';
 	private apiAiBaseUrl: string = 'https://121.40.104.79';
 	private apiQueryBaseUrl: string = 'http://121.40.104.79:5000';
 	private username: string;
@@ -284,8 +286,10 @@ export default class ChatGptViewProvider implements vscode.WebviewViewProvider {
 						messageId: this.conversationId,
 						parentMessageId: this.messageId,
 						abortSignal: this.abortController.signal,
+						timeoutMs: 15000,
 						onProgress: (partialResponse) => {
 							this.response = partialResponse.text;
+							// console.log('this.response', this.response);
 							this.sendMessage({ type: 'addResponse', value: this.response, id: this.currentMessageId, autoScroll: this.autoScroll, responseInMarkdown });
 						},
 					});

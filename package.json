@@ -1,7 +1,7 @@
 {
-  "name": "aily-generate-code",
+  "name": "aily-code-helper",
   "publisher": "Kotei.AiQingmin",
-  "displayName": "aily-generate-code",
+  "displayName": "aily-code-helper",
   "icon": "images/code-aily.png",
   "description": "kotei aily code helper powered by AI",
   "version": "1.0.0",

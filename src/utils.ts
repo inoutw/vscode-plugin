@@ -164,7 +164,7 @@ export async function browserPostEventStream(
 
         console.log('browserPostEventStream response', res);
 
-        if (!res.ok) {
+        if (!res?.ok) {
             return {
                 error: {
                     message: `ChatGPTAPI error ${res.status || res.statusText}`,
@@ -596,7 +596,7 @@ export async function browserGetResponse<T>(
             }
         });
 
-        if (!res.ok) {
+        if (!res?.ok) {
             throw res;
         }
         const response = await res.text();
