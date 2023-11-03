@@ -20,6 +20,7 @@ export async function activate(context: vscode.ExtensionContext) {
 		}
 	);
 
+	// 在状态栏注册代码检索的入口, 点击该入口触发aily.queryCode命令
 	const statusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right);
 	const queryTitle = '代码检索';
 	statusBarItem.text = `$(open-preview) ${queryTitle}`;
@@ -27,6 +28,7 @@ export async function activate(context: vscode.ExtensionContext) {
 	statusBarItem.show();
 
 
+	// 注册命令：aily.queryCode 触发时，显示webview
 	const queryCode = vscode.commands.registerCommand('aily.queryCode', () => {
 		queryProvider.show();
 	});
